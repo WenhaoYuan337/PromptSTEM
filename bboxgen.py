@@ -7,12 +7,10 @@ from skimage.color import rgb2gray
 from scipy.ndimage import gaussian_filter, label, find_objects
 from skimage.exposure import rescale_intensity
 
-# 设置路径
 image_path = 'result_zeolite/69/vis/epoch_24_train_cam.png'
 output_base_dir = 'bbox_compare_methods'
 os.makedirs(output_base_dir, exist_ok=True)
 
-# === 基础函数 ===
 def dog_enhance(gray, sigma1=1, sigma2=4):
     blur1 = gaussian_filter(gray, sigma=sigma1)
     blur2 = gaussian_filter(gray, sigma=sigma2)
@@ -83,40 +81,31 @@ def save_bboxes_to_csv(bboxes, csv_path):
         writer.writerow(['x_min', 'y_min', 'x_max', 'y_max'])
         writer.writerows(bboxes)
 
-# === 主流程 ===
-
-# 读取图像与 DoG 增强
 image = imread(image_path)
 gray = rgb2gray(image)
 dog = dog_enhance(gray)
 
-# 定义所有方法
+
 methods = {
     'clahe': apply_clahe(dog),
     'sigmoid': sigmoid_contrast(dog, gain=10, cutoff=np.mean(dog)),
     'gamma': adaptive_gamma(dog)
 }
 
-# 添加原始 dog 用于对比
 methods['dog_only'] = dog
 
-# 每种方法处理与保存
 for method_name, enhanced_img in methods.items():
     method_dir = os.path.join(output_base_dir, method_name)
     os.makedirs(method_dir, exist_ok=True)
 
-    # 保存增强图像
     imsave(os.path.join(method_dir, f"{method_name}_enhanced.png"), (enhanced_img * 255).astype(np.uint8))
 
-    # 提取 bbox
     bboxes, mask = multi_threshold_filter(enhanced_img)
 
-    # 保存掩码图像
     imsave(os.path.join(method_dir, f"{method_name}_mask.png"), (mask.astype(np.uint8) * 255))
 
-    # 保存bbox图像与CSV
     draw_bboxes(enhanced_img, bboxes, os.path.join(method_dir, f"{method_name}_bbox.png"))
     save_bboxes_to_csv(bboxes, os.path.join(method_dir, f"{method_name}_bbox.csv"))
 
-    print(f"[{method_name}] 检测目标数: {len(bboxes)}")
+    print(f"[{method_name}] counts: {len(bboxes)}")
 
