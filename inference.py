@@ -32,7 +32,6 @@ for filename in tqdm(image_paths, desc="Predicting"):
         print(f"Warning: Failed to read {filename}, skipping.")
         continue
 
-    # Resize to 1024x1024
     image_resized = cv2.resize(image, (512, 512))
     image_rgb = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
 
