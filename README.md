@@ -1,4 +1,4 @@
-# PromptSTEM: Attentional Deep Learning Accelerates Quantification of Heterogeneous Catalysts from Electron Microscopy
+# NanoSeg: Attentional Deep Learning Accelerates Quantification of Heterogeneous Catalysts from Electron Microscopy
 This codebase provides a generalizable method for automated image analysis of supported nanocalysts in transmission electron microscopy, including single-atom catalysts, sub-nano clusters, and nanoparticles.
 
 ##  Installation
